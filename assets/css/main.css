@@ -333,7 +333,9 @@ a:hover { color: var(--accent-deep); }
     .body h2::before {
         content: counter(h2, decimal-leading-zero);
         position: absolute;
-        left: -62px;
+        /* Inside the 42px gutter, clear of the margin column - at -62px it
+           landed on top of the tags whenever the marginalia ran long. */
+        left: -36px;
         top: .42em;
         font-family: var(--mono);
         font-size: 12px;
