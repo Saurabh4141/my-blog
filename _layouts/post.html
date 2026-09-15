@@ -1,0 +1,123 @@
+---
+layout: default
+---
+
+<article class="article">
+
+    <header class="article-head">
+        <h1>{{ page.title }}</h1>
+    </header>
+
+    <div class="article-grid">
+
+        {%- comment -%}
+          Metadata set in the margin rather than stacked under the headline.
+          It sticks as you scroll on a wide screen and folds into a row on a
+          narrow one.
+        {%- endcomment -%}
+        <aside class="marginalia">
+            <dl>
+                <div>
+                    <dt>Published</dt>
+                    <dd><time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%d %B %Y" }}</time></dd>
+                </div>
+                <div>
+                    <dt>Reading time</dt>
+                    <dd>{{ content | number_of_words | divided_by: 200 | plus: 1 }} minutes</dd>
+                </div>
+                {%- if page.tags.size > 0 %}
+                <div>
+                    <dt>Filed under</dt>
+                    <dd class="tags">
+                        {%- for tag in page.tags %}
+                        <span class="tag">{{ tag }}</span>
+                        {%- endfor %}
+                    </dd>
+                </div>
+                {%- endif %}
+            </dl>
+        </aside>
+
+        <div class="body">
+            {{ content }}
+        </div>
+
+        <footer class="article-foot">
+            <a class="back" href="{{ '/' | relative_url }}">&larr; All entries</a>
+            <span style="color:var(--ink-4);font-size:13px;">
+                {{ site.publisher | default: 'Core Market Research' }}
+            </span>
+        </footer>
+
+    </div>
+</article>
+
+{%- comment -%}
+  Related entries, matched on shared tags.
+
+  Done in plain Liquid with counters rather than with a filter: GitHub Pages
+  builds without plugins, and site.related_posts without the LSI flag is just
+  "the ten most recent", which is not related to anything. If nothing shares a
+  tag it falls back to the most recent other entries, so the section is never
+  empty when there is something to show.
+{%- endcomment -%}
+{%- if site.posts.size > 1 %}
+
+    {%- assign tagged = 0 -%}
+    {%- capture related_by_tag -%}
+        {%- for post in site.posts -%}
+            {%- if post.url != page.url and tagged < 3 -%}
+                {%- assign shares = false -%}
+                {%- for tag in page.tags -%}
+                    {%- if post.tags contains tag -%}{%- assign shares = true -%}{%- endif -%}
+                {%- endfor -%}
+                {%- if shares -%}
+                    {%- assign tagged = tagged | plus: 1 -%}
+                    <li class="entry">
+                        <a href="{{ post.url | relative_url }}">
+                            <div>
+                                <h2>{{ post.title }}</h2>
+                                <div class="meta-row">
+                                    <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%d %b %Y" }}</time>
+                                    <span class="dot" aria-hidden="true"></span>
+                                    <span>{{ post.content | number_of_words | divided_by: 200 | plus: 1 }} min read</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                {%- endif -%}
+            {%- endif -%}
+        {%- endfor -%}
+    {%- endcapture -%}
+
+    {%- assign recent = 0 -%}
+    {%- capture related_by_date -%}
+        {%- for post in site.posts -%}
+            {%- if post.url != page.url and recent < 3 -%}
+                {%- assign recent = recent | plus: 1 -%}
+                <li class="entry">
+                    <a href="{{ post.url | relative_url }}">
+                        <div>
+                            <h2>{{ post.title }}</h2>
+                            <div class="meta-row">
+                                <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%d %b %Y" }}</time>
+                                <span class="dot" aria-hidden="true"></span>
+                                <span>{{ post.content | number_of_words | divided_by: 200 | plus: 1 }} min read</span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            {%- endif -%}
+        {%- endfor -%}
+    {%- endcapture -%}
+
+    <section style="margin-top:70px;">
+        <div class="section-rule">
+            <span>{% if tagged > 0 %}Related{% else %}More entries{% endif %}</span>
+        </div>
+        <ol class="index" style="margin-bottom:0;">
+            {% if tagged > 0 %}{{ related_by_tag }}{% else %}{{ related_by_date }}{% endif %}
+        </ol>
+    </section>
+
+{%- endif %}
