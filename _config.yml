@@ -1,3 +1,19 @@
-theme: minima
 title: EvoIntels Insights
 description: Market research notes and analysis.
+publisher: Core Market Research
+research_url: https://coremarketresearch.com
+lede: Notes on how market research is built, bought and read.
+
+# The site is served from a project path, so Jekyll needs both halves to build
+# correct links. Do NOT add a `permalink:` key here without changing the
+# matching field in the AiBlog publish target - the admin records the URL it
+# expects, and the two must agree.
+url: https://saurabh4141.github.io
+baseurl: /my-blog
+
+# Layouts are our own, in _layouts/. No theme gem.
+plugins:
+  - jekyll-feed
+
+exclude:
+  - README.md
