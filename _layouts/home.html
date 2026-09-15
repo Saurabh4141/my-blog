@@ -1,0 +1,44 @@
+---
+layout: default
+---
+
+<p class="lede">
+    {{ site.lede | default: "Notes on how market research is built, bought and read." }}
+</p>
+
+{{ content }}
+
+<div class="section-rule"><span>Latest &middot; {{ site.posts.size }} {% if site.posts.size == 1 %}entry{% else %}entries{% endif %}</span></div>
+
+{%- if site.posts.size > 0 %}
+<ol class="index">
+    {%- for post in site.posts %}
+    <li class="entry">
+        <a href="{{ post.url | relative_url }}">
+            <div>
+                <h2>{{ post.title }}</h2>
+
+                {%- if post.description %}
+                <p>{{ post.description | strip_html | truncate: 190 }}</p>
+                {%- else %}
+                <p>{{ post.content | strip_html | truncate: 190 }}</p>
+                {%- endif %}
+
+                <div class="meta-row">
+                    <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%d %b %Y" }}</time>
+                    <span class="dot" aria-hidden="true"></span>
+                    <span>{{ post.content | number_of_words | divided_by: 200 | plus: 1 }} min read</span>
+                    {%- for tag in post.tags limit: 3 %}
+                    <span class="tag">{{ tag }}</span>
+                    {%- endfor %}
+                </div>
+            </div>
+        </a>
+    </li>
+    {%- endfor %}
+</ol>
+{%- else %}
+<p class="empty">
+    Nothing published yet. The first entry appears here the moment it goes out.
+</p>
+{%- endif %}
